@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <!-- SkillTree app icon source (1024×1024, no rounded corners: iOS/Android mask it).
+       "SK" = Plus Jakarta Sans ExtraBold converted to paths, so rendering doesn't depend on installed fonts.
+       PNGs in ios/SkillTree/Images.xcassets/AppIcon.appiconset and android/.../mipmap-* are rendered from this file. -->
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="45%" r="75%">
+      <stop offset="0" stop-color="#0E2230"/>
+      <stop offset="0.55" stop-color="#08111B"/>
+      <stop offset="1" stop-color="#04070C"/>
+    </radialGradient>
+    <radialGradient id="nebula" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#22D3EE" stop-opacity="0.30"/>
+      <stop offset="0.6" stop-color="#10B981" stop-opacity="0.08"/>
+      <stop offset="1" stop-color="#10B981" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="brand" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#22D3EE"/>
+      <stop offset="0.5" stop-color="#06B6D4"/>
+      <stop offset="1" stop-color="#10B981"/>
+    </linearGradient>
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="24" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <rect width="1024" height="1024" fill="url(#bg)"/>
+  <ellipse cx="512" cy="512" rx="430" ry="360" fill="url(#nebula)"/>
+
+  <g fill="#E6FBFF">
+    <circle cx="168" cy="196" r="5" opacity="0.8"/>
+    <circle cx="842" cy="168" r="4" opacity="0.7"/>
+    <circle cx="884" cy="760" r="5" opacity="0.6"/>
+    <circle cx="138" cy="780" r="4" opacity="0.55"/>
+    <circle cx="300" cy="880" r="3" opacity="0.5"/>
+    <circle cx="730" cy="880" r="4" opacity="0.5"/>
+    <circle cx="320" cy="130" r="3" opacity="0.45"/>
+    <circle cx="700" cy="140" r="3" opacity="0.4"/>
+  </g>
+
+  <path transform="translate(185.89 693.85) scale(0.4882)" fill="url(#brand)" filter="url(#glow)" d="M337 12Q267 12 205.5 -13.5Q144 -39 99.5 -86.0Q55 -133 33 -197L160 -254Q188 -193 237.5 -158.0Q287 -123 347 -123Q379 -123 402.0 -133.0Q425 -143 438.0 -160.5Q451 -178 451 -202Q451 -228 435.0 -246.5Q419 -265 385 -276L239 -324Q150 -353 105.0 -406.5Q60 -460 60 -535Q60 -601 92.5 -651.0Q125 -701 183.5 -729.0Q242 -757 318 -757Q385 -757 442.0 -734.0Q499 -711 540.5 -669.0Q582 -627 603 -568L477 -511Q456 -563 414.0 -592.5Q372 -622 318 -622Q287 -622 263.0 -612.0Q239 -602 226.0 -583.5Q213 -565 213 -541Q213 -515 230.0 -495.5Q247 -476 281 -465L424 -419Q514 -390 558.5 -338.0Q603 -286 603 -211Q603 -146 569.0 -95.5Q535 -45 475.5 -16.5Q416 12 337 12Z M693.0 0V-745H848.0V-372L805.0 -387L1103.0 -745H1297.0L1002.0 -389L1011.0 -499L1303.0 0H1122.0L940.0 -315L848.0 -204V0Z"/>
+</svg>
