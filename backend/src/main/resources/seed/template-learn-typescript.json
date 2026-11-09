@@ -1,0 +1,19 @@
+{
+  "title": "Learn TypeScript",
+  "description": "From first types to confidently typing real-world apps.",
+  "category": "programming",
+  "icon": "code",
+  "locale": "en",
+  "nodes": [
+    { "id": "ts-setup", "title": "Set up TypeScript", "description": "Install tsc, create tsconfig.json and compile your first file.", "xp": 50, "requires": [] },
+    { "id": "basic-types", "title": "Basic types", "description": "Use string, number, boolean, arrays and tuples with annotations.", "xp": 100, "requires": ["ts-setup"] },
+    { "id": "functions", "title": "Typed functions", "description": "Type parameters, return values, optional and default params.", "xp": 100, "requires": ["basic-types"] },
+    { "id": "interfaces", "title": "Interfaces & type aliases", "description": "Model objects with interfaces and type aliases; know when to use which.", "xp": 150, "requires": ["basic-types"] },
+    { "id": "unions", "title": "Unions & narrowing", "description": "Combine types with unions and narrow them with typeof, in and discriminants.", "xp": 200, "requires": ["interfaces"] },
+    { "id": "generics", "title": "Generics", "description": "Write reusable generic functions and types with constraints.", "xp": 250, "requires": ["functions", "interfaces"] },
+    { "id": "utility-types", "title": "Utility types", "description": "Use Partial, Pick, Omit, Record and ReturnType in real code.", "xp": 150, "requires": ["generics"] },
+    { "id": "async", "title": "Typing async code", "description": "Type Promises, async functions and API responses safely.", "xp": 200, "requires": ["functions", "unions"] },
+    { "id": "react-ts", "title": "TypeScript with React", "description": "Type props, state, events and hooks in a React component.", "xp": 300, "requires": ["generics", "async"] },
+    { "id": "capstone", "title": "Capstone: typed app", "description": "Build a small app with strict mode on and zero any.", "xp": 600, "requires": ["react-ts", "utility-types"] }
+  ]
+}
