@@ -31,8 +31,19 @@ export function setUnauthorizedHandler(handler: () => void) {
 }
 
 type RequestOptions = { method?: string; body?: unknown; headers?: Record<string, string>; auth?: boolean };
+type RequestHandler = (path: string, method: string, body: unknown) => Promise<unknown>;
+
+/** When set (demo mode), API calls are answered locally instead of over the network. */
+let localHandler: RequestHandler | null = null;
+
+export function setLocalHandler(handler: RequestHandler | null) {
+  localHandler = handler;
+}
 
 export async function request<T>(path: string, { method = 'GET', body, headers = {}, auth = true }: RequestOptions = {}): Promise<T> {
+  if (localHandler) {
+    return (await localHandler(path, method, body)) as T;
+  }
   const res = await fetch(`${API_URL}${path}`, {
     method,
     headers: {

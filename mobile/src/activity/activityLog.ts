@@ -30,6 +30,13 @@ export function recordCompletion(e: Omit<ActivityEntry, 'at'>) {
   AsyncStorage.setItem(KEY, JSON.stringify(entries)).catch(() => {});
 }
 
+/** Replaces the log (demo mode starts with a week of sample completions). */
+export function seedActivity(seed: ActivityEntry[]) {
+  entries = seed.slice(-MAX_ENTRIES);
+  emit();
+  AsyncStorage.setItem(KEY, JSON.stringify(entries)).catch(() => {});
+}
+
 export function clearActivity() {
   entries = [];
   emit();

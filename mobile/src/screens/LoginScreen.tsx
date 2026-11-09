@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Network } from 'lucide-react-native';
+import { Sparkles } from 'lucide-react-native';
 import React, { useState } from 'react';
 import { KeyboardAvoidingView, Platform, View } from 'react-native';
 
@@ -19,7 +19,7 @@ type Mode = 'login' | 'register';
 
 export function LoginScreen() {
   const t = useTheme();
-  const { login, register } = useAuth();
+  const { login, register, startDemo } = useAuth();
   const [mode, setMode] = useState<Mode>('login');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -80,7 +80,13 @@ export function LoginScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Network size={28} color="#04161C" />
+              <AppText
+                variant="title"
+                color="#04161C"
+                style={{ fontSize: 22, lineHeight: 26, letterSpacing: -0.5 }}
+              >
+                SK
+              </AppText>
             </LinearGradient>
             <AppText variant="title" style={{ fontSize: 24, lineHeight: 30 }}>
               SkillTree
@@ -152,6 +158,27 @@ export function LoginScreen() {
             loading={busy}
             disabled={!canSubmit}
           />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: t.colors.border }} />
+            <AppText variant="caption" color={t.colors.textSecondary}>
+              or
+            </AppText>
+            <View style={{ flex: 1, height: 1, backgroundColor: t.colors.border }} />
+          </View>
+          <Button
+            label="Try the demo"
+            variant="secondary"
+            icon={Sparkles}
+            onPress={startDemo}
+            disabled={busy}
+          />
+          <AppText
+            variant="caption"
+            color={t.colors.textSecondary}
+            style={{ textAlign: 'center' }}
+          >
+            No account or server needed. Sample skill trees stay on this device.
+          </AppText>
         </Card>
       </KeyboardAvoidingView>
     </Screen>
