@@ -1,0 +1,41 @@
+name: Branch policy
+
+# Enforces GitFlow naming and Jira keys so the Release Manager can link PRs, commits and builds to SKILL-* issues.
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate branch name and target
+        env:
+          HEAD: ${{ github.head_ref }}
+          BASE: ${{ github.base_ref }}
+          TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+
+          case "$HEAD" in
+            feature/SKILL-[0-9]*-*|bugfix/SKILL-[0-9]*-*)
+              [ "$BASE" = "develop" ] || fail "feature/bugfix branches must target develop" ;;
+            release/[0-9]*.[0-9]*.[0-9]*)
+              [ "$BASE" = "main" ] || [ "$BASE" = "develop" ] || fail "release branches merge into main and back into develop" ;;
+            hotfix/[0-9]*.[0-9]*.[0-9]*)
+              [ "$BASE" = "main" ] || [ "$BASE" = "develop" ] || fail "hotfix branches merge into main and back into develop" ;;
+            main)
+              [ "$BASE" = "develop" ] || fail "main can only be merged back into develop" ;;
+            dependabot/*) ;;
+            *) fail "Branch '$HEAD' does not follow GitFlow: feature/SKILL-123-short-name, release/x.y.z, hotfix/x.y.z" ;;
+          esac
+
+          case "$HEAD" in
+            feature/*|bugfix/*)
+              echo "$TITLE" | grep -Eq '^SKILL-[0-9]+' || fail "PR title must start with the Jira key, e.g. 'SKILL-24 Implement Skill Tree UI'" ;;
+          esac
+          echo "Branch policy OK"

@@ -1,0 +1,29 @@
+# OS / editors
+.DS_Store
+.idea/
+.vscode/
+*.iml
+
+# Env & secrets
+.env
+.env.*
+!.env.example
+*.keystore
+*.jks
+*.p8
+*.p12
+*.mobileprovision
+google-services.json
+GoogleService-Info.plist
+
+# Node
+node_modules/
+dist/
+.expo/
+web-build/
+
+# Java
+backend/target/
+
+# Local H2 database (dev profile)
+backend/data/
