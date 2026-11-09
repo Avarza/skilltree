@@ -1,0 +1,42 @@
+name: Mobile release (EAS)
+
+# release/* → staging build for QA; tag v* on main → production build after manual approval
+# (GitHub Environment "production" with required reviewers). Requires the EXPO_TOKEN secret and `eas init` once.
+on:
+  push:
+    branches: ["release/**"]
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: EAS build profile
+        type: choice
+        options: [staging, production]
+        default: staging
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: ${{ (startsWith(github.ref, 'refs/tags/v') || inputs.profile == 'production') && 'production' || 'staging' }}
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      PROFILE: ${{ (startsWith(github.ref, 'refs/tags/v') || inputs.profile == 'production') && 'production' || 'staging' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+      - run: npm ci
+      - name: Build
+        run: eas build --platform all --profile "$PROFILE" --non-interactive --no-wait --message "${GITHUB_REF_NAME} (${GITHUB_SHA::7})"

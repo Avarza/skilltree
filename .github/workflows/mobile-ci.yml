@@ -1,0 +1,35 @@
+name: Mobile CI
+
+on:
+  pull_request:
+    branches: [develop, main, "release/**"]
+    paths: ["mobile/**", ".github/workflows/mobile-ci.yml"]
+  push:
+    branches: [develop, main, "release/**", "hotfix/**"]
+    paths: ["mobile/**", ".github/workflows/mobile-ci.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mobile-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, lint & test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: mobile/package-lock.json
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx eslint src App.tsx __tests__ --max-warnings 0
+      - run: npx jest --ci

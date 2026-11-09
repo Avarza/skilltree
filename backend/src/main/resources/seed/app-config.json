@@ -1,0 +1,13 @@
+{
+  "activeTheme": "default",
+  "aiGeneration": {
+    "enabled": true,
+    "dailyLimitPerUser": 5,
+    "maxNodes": 25
+  },
+  "progression": {
+    "defaultNodeXp": 100,
+    "xpPerLevel": 500
+  },
+  "defaultLocale": "cs"
+}

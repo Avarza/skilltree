@@ -1,0 +1,20 @@
+# Local PostgreSQL for the backend (profile "postgres").
+# Start: docker compose up -d   then   cd backend && SPRING_PROFILES_ACTIVE=postgres ./mvnw spring-boot:run
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: skilltree
+      POSTGRES_USER: skilltree
+      POSTGRES_PASSWORD: skilltree
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U skilltree"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  pgdata:
