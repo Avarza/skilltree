@@ -1,0 +1,36 @@
+name: CMS CI
+
+on:
+  pull_request:
+    branches: [develop, main, "release/**"]
+    paths: ["cms/**", ".github/workflows/cms-ci.yml"]
+  push:
+    branches: [develop, main, "release/**", "hotfix/**"]
+    paths: ["cms/**", ".github/workflows/cms-ci.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cms-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: Typecheck, lint, test & build
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cms
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: cms/package-lock.json
+      - run: npm ci
+      - run: npx tsc -b
+      - run: npx oxlint --deny-warnings
+      - run: npx vitest run
+      - run: npx vite build
