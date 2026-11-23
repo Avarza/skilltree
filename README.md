@@ -6,7 +6,7 @@ Google Play a release management přes GitFlow + Jira + GitHub Actions + Expo EA
 | Část | Složka | Stav |
 |---|---|---|
 | Backend – Spring Boot 4, Java 17, PostgreSQL | [`backend/`](backend) | ✅ fáze 1 |
-| CMS – React + TypeScript + TanStack Query | `cms/` | další krok |
+| CMS – React + TypeScript + TanStack Query | [`cms/`](cms) | ✅ v1 |
 | Mobilní aplikace – React Native 0.88 (bare) + Expo moduly | [`mobile/`](mobile) | ✅ v1 |
 | Release Manager | samostatné repo `skilltree-release-manager` | později |
 
