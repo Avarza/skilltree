@@ -5,6 +5,7 @@ import { KeyboardAvoidingView, Platform, View } from 'react-native';
 
 import { errorMessage } from '../api/client';
 import { useAuth } from '../auth/AuthProvider';
+import { LogoMark } from '../components/LogoMark';
 import {
   AppText,
   Button,
@@ -80,13 +81,7 @@ export function LoginScreen() {
                 justifyContent: 'center',
               }}
             >
-              <AppText
-                variant="title"
-                color="#04161C"
-                style={{ fontSize: 22, lineHeight: 26, letterSpacing: -0.5 }}
-              >
-                SK
-              </AppText>
+              <LogoMark size={38} />
             </LinearGradient>
             <AppText variant="title" style={{ fontSize: 24, lineHeight: 30 }}>
               SkillTree

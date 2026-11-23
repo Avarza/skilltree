@@ -32,6 +32,7 @@ import Svg, {
 
 import { scheduleOnUI } from 'react-native-worklets';
 
+import { GlassSurface, LIQUID_GLASS } from '../components/Glass';
 import { AppText } from '../components/ui';
 import { useTheme } from '../theme/theme';
 
@@ -262,32 +263,22 @@ export function SpaceCanvas({
         accessibilityLabel="Show the whole tree"
         style={({ pressed }) => [
           styles.fitBtn,
-          {
-            top: controlsTop,
-            backgroundColor: t.colors.surface,
-            borderColor: t.colors.border,
-            opacity: pressed ? 0.7 : 1,
-          },
+          { top: controlsTop, opacity: pressed && !LIQUID_GLASS ? 0.7 : 1 },
         ]}
       >
-        <Focus size={18} color={t.colors.primary} />
+        <GlassSurface interactive style={styles.fitGlass}>
+          <Focus size={18} color={t.colors.primary} />
+        </GlassSurface>
       </Pressable>
       {hintVisible ? (
-        <View
+        <GlassSurface
           pointerEvents="none"
-          style={[
-            styles.hint,
-            {
-              top: controlsTop + 50,
-              backgroundColor: `${t.colors.surface}E6`,
-              borderColor: t.colors.border,
-            },
-          ]}
+          style={[styles.hint, { top: controlsTop + 50 }]}
         >
           <AppText variant="caption" color={t.colors.textSecondary}>
             Drag to explore · pinch to zoom · double-tap to see all
           </AppText>
-        </View>
+        </GlassSurface>
       ) : null}
     </View>
   );
@@ -424,8 +415,11 @@ const styles = StyleSheet.create({
     top: 8,
     width: 40,
     height: 40,
+  },
+  fitGlass: {
+    width: 40,
+    height: 40,
     borderRadius: 20,
-    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -435,7 +429,6 @@ const styles = StyleSheet.create({
     top: 58,
     paddingHorizontal: 12,
     paddingVertical: 6,
-    borderRadius: 999,
-    borderWidth: 1,
+    borderRadius: 16,
   },
 });

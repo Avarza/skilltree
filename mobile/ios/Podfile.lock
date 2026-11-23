@@ -57,11 +57,15 @@ PODS:
     - Yoga
   - ExpoAsset (58.0.20):
     - ExpoModulesCore
+  - ExpoBlur (58.0.5):
+    - ExpoModulesCore
   - ExpoDomWebView (58.0.2):
     - ExpoModulesCore
   - ExpoFileSystem (58.0.13):
     - ExpoModulesCore
   - ExpoFont (58.0.11):
+    - ExpoModulesCore
+  - ExpoGlassEffect (58.0.5):
     - ExpoModulesCore
   - ExpoKeepAwake (58.0.3):
     - ExpoModulesCore
@@ -2226,9 +2230,11 @@ DEPENDENCIES:
   - EXConstants (from `../node_modules/expo-constants/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
+  - ExpoBlur (from `../node_modules/expo-blur/ios`)
   - "ExpoDomWebView (from `../node_modules/@expo/dom-webview/ios`)"
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
+  - ExpoGlassEffect (from `../node_modules/expo-glass-effect/ios`)
   - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - "ExpoLogBox (from `../node_modules/@expo/log-box`)"
@@ -2342,12 +2348,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
+  ExpoBlur:
+    :path: "../node_modules/expo-blur/ios"
   ExpoDomWebView:
     :path: "../node_modules/@expo/dom-webview/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
     :path: "../node_modules/expo-font/ios"
+  ExpoGlassEffect:
+    :path: "../node_modules/expo-glass-effect/ios"
   ExpoKeepAwake:
     :path: "../node_modules/expo-keep-awake/ios"
   ExpoLinearGradient:
@@ -2553,9 +2563,11 @@ SPEC CHECKSUMS:
   EXConstants: c1eb9dab7494834d85aa347165da9718cdfc21a6
   Expo: 5e153ccf91cc18517c0d0d43c90fd2fdc19eac80
   ExpoAsset: c080026976ef8f00dca12c4958c658b2ebd4d4e0
+  ExpoBlur: 68f7f85ae6584f0bec52a0a42ee5088b093d1473
   ExpoDomWebView: b2a6d681b9d34c23b1f584321386ca8da1d36afb
   ExpoFileSystem: b619d80b490c53117a9a9c976021a4ce5a9da440
   ExpoFont: 77eaad26c6a7ef6be8d431963358def09d8e3a73
+  ExpoGlassEffect: 6594e055df1e0b88d34cc189ba0b21589adec6bf
   ExpoKeepAwake: fd18a5d233329013c578030ad399d8e10b252b5f
   ExpoLinearGradient: 0a669599d57e1421c4718d59eed8c96fe02c1467
   ExpoLogBox: 9bfba7bb99c806b678703e6c62323f3c4785e706

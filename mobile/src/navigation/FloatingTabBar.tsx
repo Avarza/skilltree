@@ -20,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { GlassSurface, LIQUID_GLASS } from '../components/Glass';
 import { useTheme } from '../theme/theme';
 
 const ICONS: Record<string, LucideIcon> = {
@@ -65,70 +66,67 @@ export function FloatingTabBar({
       pointerEvents="box-none"
       style={[styles.wrap, { bottom: Math.max(insets.bottom, 12) + 6 }]}
     >
-      <View
-        style={[
-          styles.pill,
-          { backgroundColor: t.colors.surface, borderColor: t.colors.border },
-        ]}
-      >
-        {state.routes.map(route => (
-          <View
-            key={`bg-${route.key}`}
-            style={[
-              styles.btn,
-              {
-                backgroundColor: t.colors.surfaceMuted,
-                position: 'absolute',
-                left: PAD + state.routes.indexOf(route) * (BTN + GAP),
-                top: PAD,
-              },
-            ]}
-          />
-        ))}
-        <Animated.View
-          pointerEvents="none"
-          style={[styles.indicator, { shadowColor: t.glow }, indicator]}
-        >
-          <LinearGradient
-            colors={t.gradient}
-            start={{ x: 0, y: 0 }}
-            end={{ x: 1, y: 1 }}
-            style={StyleSheet.absoluteFill}
-          />
-        </Animated.View>
-        {state.routes.map((route, index) => {
-          const focused = state.index === index;
-          const Icon = ICONS[route.name] ?? House;
-          const label = descriptors[route.key].options.title ?? route.name;
-          const onPress = () => {
-            const event = navigation.emit({
-              type: 'tabPress',
-              target: route.key,
-              canPreventDefault: true,
-            });
-            if (!focused && !event.defaultPrevented) {
-              navigation.navigate(route.name, route.params);
-            }
-          };
-          return (
-            <Pressable
-              key={route.key}
-              onPress={onPress}
-              accessibilityRole="tab"
-              accessibilityLabel={label}
-              accessibilityState={{ selected: focused }}
-              style={styles.btn}
-            >
-              <TabIcon
-                Icon={Icon}
-                index={index}
-                pos={pos}
-                active="#04161C"
-                inactive={t.colors.textSecondary}
-              />
-            </Pressable>
-          );
-        })}
+      <View style={LIQUID_GLASS ? null : styles.shadow}>
+        <GlassSurface interactive style={styles.pill}>
+          {state.routes.map(route => (
+            <View
+              key={`bg-${route.key}`}
+              style={[
+                styles.btn,
+                {
+                  backgroundColor: 'rgba(255,255,255,0.06)',
+                  position: 'absolute',
+                  left: PAD + state.routes.indexOf(route) * (BTN + GAP),
+                  top: PAD,
+                },
+              ]}
+            />
+          ))}
+          <Animated.View
+            pointerEvents="none"
+            style={[styles.indicator, { shadowColor: t.glow }, indicator]}
+          >
+            <LinearGradient
+              colors={t.gradient}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={StyleSheet.absoluteFill}
+            />
+          </Animated.View>
+          {state.routes.map((route, index) => {
+            const focused = state.index === index;
+            const Icon = ICONS[route.name] ?? House;
+            const label = descriptors[route.key].options.title ?? route.name;
+            const onPress = () => {
+              const event = navigation.emit({
+                type: 'tabPress',
+                target: route.key,
+                canPreventDefault: true,
+              });
+              if (!focused && !event.defaultPrevented) {
+                navigation.navigate(route.name, route.params);
+              }
+            };
+            return (
+              <Pressable
+                key={route.key}
+                onPress={onPress}
+                accessibilityRole="tab"
+                accessibilityLabel={label}
+                accessibilityState={{ selected: focused }}
+                style={styles.btn}
+              >
+                <TabIcon
+                  Icon={Icon}
+                  index={index}
+                  pos={pos}
+                  active="#04161C"
+                  inactive={t.colors.textSecondary}
+                />
+              </Pressable>
+            );
+          })}
+        </GlassSurface>
       </View>
     </View>
   );
@@ -176,8 +174,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: GAP,
     padding: PAD,
-    borderRadius: 999,
-    borderWidth: 1,
+    borderRadius: BTN / 2 + PAD,
+  },
+  // Liquid Glass brings its own depth; the fallback gets a drop shadow on a wrapper (glass clips its children).
+  shadow: {
+    borderRadius: BTN / 2 + PAD,
     shadowColor: '#000',
     shadowOpacity: 0.5,
     shadowRadius: 24,

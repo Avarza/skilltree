@@ -5,7 +5,7 @@ import {
   SafeAreaView,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
-import Svg, { Line } from 'react-native-svg';
+import Svg, { Circle, Path } from 'react-native-svg';
 
 import { useTrees } from '../api/trees';
 import type { SkillTree } from '../api/types';
@@ -19,28 +19,22 @@ import { SpaceCanvas } from '../tree/SpaceCanvas';
 import { useTheme } from '../theme/theme';
 import { Avatar, ErrorState } from './shared';
 
-const ORB = 54;
-const INNER_RING = 8;
-const R1 = 170;
-const R2 = 300;
+const ORB = 62;
+const MAP_WIDTH = 440;
+const CENTER_X = MAP_WIDTH / 2;
+const HUB_Y = 190;
 
-/** Places trees on two rings around the user: the first 8 close, the rest further out. */
-function galaxyLayout(count: number) {
-  const outer = Math.max(0, count - INNER_RING);
-  const radius = outer > 0 ? R2 : R1;
-  const size = radius * 2 + 220;
-  const c = size / 2;
-  const points = Array.from({ length: count }, (_, i) => {
-    const onInner = i < INNER_RING;
-    const n = onInner ? Math.min(count, INNER_RING) : outer;
-    const k = onInner ? i : i - INNER_RING;
-    // Offset the outer ring by half a step so planets sit between the inner ones.
-    const a =
-      -Math.PI / 2 + (k * 2 * Math.PI) / n + (onInner ? 0 : Math.PI / n);
-    const r = onInner ? R1 : R2;
-    return { x: c + r * Math.cos(a), y: c + r * Math.sin(a) };
-  });
-  return { size, center: c, points };
+/** A vertical circuit with staggered branches, based on the skill-tree reference. */
+function circuitLayout(count: number) {
+  const points = Array.from({ length: count }, (_, i) => ({
+    x: i % 2 === 0 ? 105 : 335,
+    y: 360 + Math.floor(i / 2) * 190 + (i % 2) * 65,
+  }));
+  return {
+    width: MAP_WIDTH,
+    height: Math.max(740, (points.at(-1)?.y ?? 360) + 200),
+    points,
+  };
 }
 
 export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
@@ -50,7 +44,7 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
   const trees = useTrees();
   const list = useMemo(() => trees.data ?? [], [trees.data]);
   const p = overallProgress(list, snapshot.config.progression.xpPerLevel);
-  const g = useMemo(() => galaxyLayout(list.length), [list.length]);
+  const g = useMemo(() => circuitLayout(list.length), [list.length]);
   const name = user?.displayName || user?.email.split('@')[0] || '';
   const insets = useSafeAreaInsets();
 
@@ -58,25 +52,31 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
     <View style={{ flex: 1, backgroundColor: t.colors.background }}>
       {list.length > 0 ? (
         <SpaceCanvas
-          contentWidth={g.size}
-          contentHeight={g.size}
-          focus={{ x: g.center, y: g.center }}
-          focusAnchorY={0.5}
+          contentWidth={g.width}
+          contentHeight={g.height}
+          focus={{ x: CENTER_X, y: HUB_Y + 95 }}
+          focusAnchorY={0.43}
           controlsTop={insets.top + 76}
         >
-          <Svg width={g.size} height={g.size} style={{ position: 'absolute' }}>
+          <Svg width={g.width} height={g.height} style={{ position: 'absolute' }}>
+            <Path
+              d={`M ${CENTER_X} ${HUB_Y + 42} V ${(g.points.at(-1)?.y ?? HUB_Y) + 22}`}
+              stroke={t.colors.primary}
+              strokeWidth={2}
+              opacity={0.35}
+            />
             {g.points.map((pt, i) => (
-              <Line
-                key={list[i].id}
-                x1={g.center}
-                y1={g.center}
-                x2={pt.x}
-                y2={pt.y}
-                stroke={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
-                strokeWidth={2}
-                strokeLinecap="round"
-                opacity={list[i].completedNodes === 0 ? 0.3 : 0.75}
-              />
+              <React.Fragment key={list[i].id}>
+                <Path
+                  d={`M ${CENTER_X} ${pt.y - 22} V ${pt.y} H ${pt.x}`}
+                  stroke={CATEGORY_COLORS[i % CATEGORY_COLORS.length]}
+                  strokeWidth={2}
+                  strokeLinejoin="round"
+                  opacity={list[i].completedNodes === 0 ? 0.4 : 0.85}
+                  fill="none"
+                />
+                <Circle cx={CENTER_X} cy={pt.y - 22} r={3} fill={t.colors.primary} opacity={0.65} />
+              </React.Fragment>
             ))}
           </Svg>
           {list.map((tree, i) => (
@@ -94,11 +94,11 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
           <View
             style={{
               position: 'absolute',
-              left: g.center - 60,
-              top: g.center - 30,
-              width: 120,
+              left: CENTER_X - 70,
+              top: HUB_Y - 62,
+              width: 140,
               alignItems: 'center',
-              gap: 8,
+              gap: 12,
             }}
           >
             <View
@@ -109,7 +109,9 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
                 shadowOffset: { width: 0, height: 0 },
               }}
             >
-              <Avatar name={name} size={60} />
+              <View style={{ padding: 10, borderRadius: 50, borderWidth: 2, borderColor: t.colors.primary, backgroundColor: t.colors.surface }}>
+                <Avatar name={name} size={60} />
+              </View>
             </View>
             <View
               style={{
@@ -121,7 +123,7 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
                 borderColor: t.colors.border,
               }}
             >
-              <AppText variant="bodyStrong">You · LV {p.level}</AppText>
+              <AppText variant="bodyStrong">You · Level {p.level}</AppText>
             </View>
           </View>
         </SpaceCanvas>
@@ -145,9 +147,9 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
         >
           <View pointerEvents="none">
             <AppText variant="overline" color={t.colors.textSecondary}>
-              YOUR SKILL GALAXY
+              YOUR SKILL TREE
             </AppText>
-            <AppText variant="display">All trees</AppText>
+            <AppText variant="display">Skill map</AppText>
           </View>
           <Chip icon={Gem} label={`LV ${p.level} · ${p.earned}`} />
         </Row>
@@ -158,13 +160,13 @@ export function SkillMapScreen({ navigation }: TabScreenProps<'SkillMap'>) {
         ) : null}
         {trees.isSuccess && list.length === 0 ? (
           <Card style={{ alignItems: 'center', gap: 10, marginTop: 40 }}>
-            <AppText variant="headline">Your galaxy is empty</AppText>
+            <AppText variant="headline">Your skill tree is empty</AppText>
             <AppText
               variant="body"
               color={t.colors.textSecondary}
               style={{ textAlign: 'center' }}
             >
-              Every tree you start becomes a planet around you.
+              Every course you start adds a new branch to your map.
             </AppText>
             <Button
               label="Create a tree"

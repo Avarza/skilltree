@@ -91,27 +91,33 @@ export function TreeCard({ tree, onPress }: { tree: SkillTree; onPress?: () => v
   const t = useTheme();
   const Icon = iconForTree(tree);
   const pct = treeProgress(tree);
-  const subtitle =
-    tree.source === 'AI' ? `AI generated · ${tree.completedNodes} / ${tree.nodes.length} skills` : `Level ${tree.level} · ${tree.earnedXp} / ${tree.totalXp} XP`;
+  const next = tree.nodes.find(node => node.status === 'IN_PROGRESS' || node.status === 'AVAILABLE');
+  const chapter = next ? Math.max(1, tree.nodes.findIndex(node => node.id === next.id) + 1) : tree.nodes.length;
   return (
     <Pressable onPress={onPress} accessibilityRole="button" accessibilityLabel={`${tree.title}, ${Math.round(pct * 100)} percent`}>
       {({ pressed }) => (
-        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 12, opacity: pressed ? 0.85 : 1 }}>
-          <View style={[styles.tile, { backgroundColor: hexAlpha(t.colors.primary, 0.12) }]}>
-            <Icon size={24} color={t.colors.primary} strokeWidth={2} />
-          </View>
-          <View style={{ flex: 1, gap: 4 }}>
-            <AppText variant="headline" numberOfLines={1}>
+        <Card style={{ gap: 14, opacity: pressed ? 0.85 : 1, overflow: 'hidden' }}>
+          <View style={{ position: 'absolute', top: -48, right: -35, width: 150, height: 110, borderRadius: 80, backgroundColor: hexAlpha(t.colors.primary, 0.09) }} />
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+            <View style={[styles.tile, { width: 34, height: 34, borderRadius: 10, backgroundColor: hexAlpha(t.colors.primary, 0.15) }]}>
+              <Icon size={20} color={t.colors.primary} strokeWidth={2} />
+            </View>
+            <AppText variant="bodyStrong" numberOfLines={1} style={{ flex: 1 }}>
               {tree.title}
             </AppText>
-            <AppText variant="caption" color={t.colors.textSecondary} numberOfLines={1}>
-              {subtitle}
+            <View style={[styles.arrow, { backgroundColor: t.colors.surfaceMuted }]}>
+              <ArrowUpRight size={18} color={t.colors.primary} />
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <AppText variant="caption" color={t.colors.textSecondary}>
+              Chapter: {chapter}
             </AppText>
-            <ProgressBar value={pct} />
+            <AppText variant="caption" color={t.colors.textSecondary}>
+              Progress: {Math.round(pct * 100)}%
+            </AppText>
           </View>
-          <View style={[styles.arrow, { backgroundColor: t.colors.surfaceMuted }]}>
-            <ArrowUpRight size={18} color={t.colors.primary} />
-          </View>
+          <ProgressBar value={pct} height={12} />
         </Card>
       )}
     </Pressable>
@@ -172,12 +178,12 @@ export function StreakDay({ label, state }: { label: string; state: 'done' | 'to
 
 export function StatTile({ icon: Icon, label, value, color }: { icon: LucideIcon; label: string; value: string; color: string }) {
   return (
-    <Card style={{ flex: 1, gap: 18 }}>
-      <Row>
-        <Icon size={20} color={color} strokeWidth={2} />
-        <AppText variant="bodyStrong">{label}</AppText>
+    <Card style={{ flex: 1, gap: 20, minHeight: 120, justifyContent: 'space-between', padding: 14 }}>
+      <Row gap={7}>
+        <Icon size={18} color={color} strokeWidth={2} />
+        <AppText variant="caption" numberOfLines={1} style={{ flexShrink: 1 }}>{label}</AppText>
       </Row>
-      <AppText variant="display" style={{ fontSize: 36, lineHeight: 40 }}>
+      <AppText variant="display" style={{ fontSize: 36, lineHeight: 42 }}>
         {value}
       </AppText>
     </Card>
