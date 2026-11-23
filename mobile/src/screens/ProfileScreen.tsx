@@ -11,7 +11,7 @@ import { Avatar } from './shared';
 
 export function ProfileScreen() {
   const t = useTheme();
-  const { user, logout } = useAuth();
+  const { user, isDemo, logout } = useAuth();
   const { snapshot, source, refresh } = useConfig();
   const name = user?.displayName || user?.email.split('@')[0] || '';
   return (
@@ -33,7 +33,7 @@ export function ProfileScreen() {
         />
         <InfoRow label="Loaded from" value={source} />
         <InfoRow label="Theme" value={snapshot.theme.name} />
-        <InfoRow label="Server" value={API_URL} />
+        <InfoRow label="Server" value={isDemo ? 'demo mode (offline)' : API_URL} />
         <Button
           label="Check for updates"
           variant="secondary"
@@ -42,7 +42,21 @@ export function ProfileScreen() {
           onPress={refresh}
         />
       </Card>
-      <Button label="Sign out" variant="ghost" icon={LogOut} onPress={logout} />
+      {isDemo ? (
+        <AppText
+          variant="caption"
+          color={t.colors.textSecondary}
+          style={{ textAlign: 'center' }}
+        >
+          You are exploring the demo. Leaving it resets the sample data.
+        </AppText>
+      ) : null}
+      <Button
+        label={isDemo ? 'Leave demo' : 'Sign out'}
+        variant="ghost"
+        icon={LogOut}
+        onPress={logout}
+      />
     </Screen>
   );
 }

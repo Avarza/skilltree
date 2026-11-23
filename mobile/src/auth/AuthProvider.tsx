@@ -1,21 +1,28 @@
 import { useQueryClient } from '@tanstack/react-query';
 import * as SecureStore from 'expo-secure-store';
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
-import { request, setAuthToken, setUnauthorizedHandler } from '../api/client';
+import { request, setAuthToken, setLocalHandler, setUnauthorizedHandler } from '../api/client';
 import type { TokenResponse, User } from '../api/types';
-import { clearActivity } from '../activity/activityLog';
+import { clearActivity, seedActivity } from '../activity/activityLog';
+import { demoRequest, resetDemo } from '../demo/demoApi';
+import { seedCompletions } from '../demo/demoData';
 
 const SESSION_KEY = 'skilltree.session';
 
-type Session = { token: string; expiresAt: string; user: User };
+/** `demo` sessions never talk to the server: requests are answered by the local demo store. */
+type Session = { token: string; expiresAt: string; user: User; demo?: boolean };
 type AuthState = {
   status: 'loading' | 'signedOut' | 'signedIn';
   user: User | null;
+  isDemo: boolean;
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, password: string, displayName?: string) => Promise<void>;
+  startDemo: () => Promise<void>;
   logout: () => Promise<void>;
 };
+
+const DEMO_USER: User = { id: 0, email: 'demo@skilltree.app', displayName: 'Demo explorer', role: 'USER' };
 
 const AuthContext = createContext<AuthState | null>(null);
 
@@ -26,7 +33,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   const apply = useCallback(async (s: Session | null) => {
-    setAuthToken(s?.token ?? null);
+    setLocalHandler(s?.demo ? demoRequest : null);
+    setAuthToken(s?.demo ? null : s?.token ?? null);
     setSession(s);
     if (s) {
       await SecureStore.setItemAsync(SESSION_KEY, JSON.stringify(s));
@@ -35,10 +43,26 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  // Read through a ref so `logout` stays stable (the startup effect below depends on it).
+  const isDemoRef = useRef(false);
+  isDemoRef.current = !!session?.demo;
+
   const logout = useCallback(async () => {
+    const wasDemo = isDemoRef.current;
     await apply(null);
     qc.clear();
     clearActivity();
+    if (wasDemo) {
+      await resetDemo();
+    }
+  }, [apply, qc]);
+
+  const startDemo = useCallback(async () => {
+    qc.clear();
+    await resetDemo();
+    seedActivity(seedCompletions());
+    const farFuture = new Date(Date.now() + 365 * 24 * 3600 * 1000).toISOString();
+    await apply({ token: 'demo', expiresAt: farFuture, user: DEMO_USER, demo: true });
   }, [apply, qc]);
 
   useEffect(() => {
@@ -86,11 +110,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     () => ({
       status: loading ? 'loading' : session ? 'signedIn' : 'signedOut',
       user: session?.user ?? null,
+      isDemo: !!session?.demo,
       login,
       register,
+      startDemo,
       logout,
     }),
-    [loading, session, login, register, logout],
+    [loading, session, login, register, startDemo, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

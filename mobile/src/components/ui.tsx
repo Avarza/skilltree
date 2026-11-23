@@ -26,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Svg, { Defs, RadialGradient, Rect, Stop } from 'react-native-svg';
 
 import { type as typeScale, useTheme, type TypeVariant } from '../theme/theme';
+import { GlassSurface, LIQUID_GLASS } from './Glass';
 
 // ---------------------------------------------------------------------------------------------------------------
 // Text
@@ -268,20 +269,25 @@ export function IconButton({
       style={({ pressed }) => ({
         width: size,
         height: size,
-        borderRadius: size / 2,
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: filled ? t.colors.surface : t.colors.surfaceMuted,
-        borderWidth: filled ? 1 : 0,
-        borderColor: t.colors.border,
-        opacity: pressed ? 0.7 : 1,
+        opacity: pressed && !LIQUID_GLASS ? 0.7 : 1,
       })}
     >
-      <Icon
-        size={size / 2}
-        color={filled ? t.colors.textPrimary : t.colors.primary}
-        strokeWidth={2}
-      />
+      <GlassSurface
+        interactive
+        style={{
+          width: size,
+          height: size,
+          borderRadius: size / 2,
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <Icon
+          size={size / 2}
+          color={filled ? t.colors.textPrimary : t.colors.primary}
+          strokeWidth={2}
+        />
+      </GlassSurface>
     </Pressable>
   );
 }

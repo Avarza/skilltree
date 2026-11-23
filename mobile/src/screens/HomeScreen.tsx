@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { Flame, Gem, Layers, Sparkles, Trophy } from 'lucide-react-native';
+import { ArrowUpRight, Gem, Layers, Sparkles, Trophy } from 'lucide-react-native';
 import React from 'react';
 import { RefreshControl, ScrollView, View } from 'react-native';
 
@@ -59,7 +59,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'Home'>) {
           />
         }
       >
-        <Row gap={12}>
+        <Row gap={12} style={{ paddingTop: 8, paddingBottom: 4 }}>
           <Avatar name={name} size={44} />
           <View style={{ flex: 1 }}>
             <AppText variant="caption" color={t.colors.textSecondary}>
@@ -70,7 +70,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'Home'>) {
           <Chip icon={Gem} label={p.earned.toLocaleString('cs-CZ')} />
         </Row>
 
-        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 14 }}>
+        <Card style={{ flexDirection: 'row', alignItems: 'center', gap: 14, paddingVertical: 14 }}>
           <LinearGradient
             colors={t.gradient}
             start={{ x: 0, y: 0 }}
@@ -90,14 +90,10 @@ export function HomeScreen({ navigation }: TabScreenProps<'Home'>) {
             </View>
           </LinearGradient>
           <View style={{ flex: 1, gap: 6 }}>
-            <Row style={{ justifyContent: 'space-between' }}>
-              <AppText variant="headline">
-                Level {p.level} · {p.title}
-              </AppText>
-              <AppText variant="caption" color={t.colors.textSecondary}>
-                {p.intoLevel} / {p.xpPerLevel} XP
-              </AppText>
-            </Row>
+            <AppText variant="headline">Level {p.level} · {p.title}</AppText>
+            <AppText variant="caption" color={t.colors.textSecondary}>
+              {p.intoLevel} / {p.xpPerLevel} XP to next level
+            </AppText>
             <ProgressBar value={p.intoLevel / p.xpPerLevel} />
           </View>
         </Card>
@@ -105,27 +101,27 @@ export function HomeScreen({ navigation }: TabScreenProps<'Home'>) {
         <Row gap={12}>
           <StatTile
             icon={Layers}
-            label="Active trees"
+            label="Total courses"
             value={String(list.length)}
             color={t.colors.primary}
           />
           <StatTile
             icon={Trophy}
-            label="Skills done"
-            value={String(p.completed)}
+            label="Completed"
+            value={String(list.filter(tree => tree.nodes.length > 0 && tree.completedNodes === tree.nodes.length).length)}
             color={t.colors.nodeInProgress}
           />
         </Row>
 
-        <Card style={{ gap: 16 }}>
+        <Card style={{ gap: 18, paddingVertical: 18 }}>
           <Row>
             <AppText variant="headline" style={{ flex: 1 }}>
-              Daily Streak
+              Daily Streaks
             </AppText>
-            <Flame size={18} color={t.colors.nodeInProgress} />
-            <AppText variant="bodyStrong" color={t.colors.nodeInProgress}>
+            <AppText variant="caption" color={t.colors.primary}>
               {streak} {streak === 1 ? 'day' : 'days'}
             </AppText>
+            <ArrowUpRight size={18} color={t.colors.primary} />
           </Row>
           <Row style={{ justifyContent: 'space-between' }}>
             {week.map((d, i) => (
@@ -148,7 +144,7 @@ export function HomeScreen({ navigation }: TabScreenProps<'Home'>) {
 
         <SectionTitle
           title="Continue learning"
-          action={list.length > 3 ? 'View all' : undefined}
+          action={list.length > 0 ? 'View all' : undefined}
           onAction={() => navigation.navigate('SkillMap')}
         />
         {trees.isError ? (
